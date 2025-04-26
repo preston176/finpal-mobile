@@ -1,11 +1,13 @@
 import { StyleSheet, Text } from 'react-native'
 import React from 'react'
 import ScreenWrapper from '@/components/ScreenWrapper'
+import Typo from '@/components/Typo'
 
 const welcome = () => {
     return (
         <ScreenWrapper>
-            <Text style={{ color: "white" }}>welcome</Text>
+
+            <Typo>Welcome</Typo>
         </ScreenWrapper>
     )
 }
