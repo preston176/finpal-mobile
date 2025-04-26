@@ -20,11 +20,11 @@ const Home = () => {
     return (
         <ScreenWrapper>
             <Typo>Home</Typo>
-            <Button onPress={handleLogout}>
+            {/* <Button onPress={handleLogout}>
                 <Typo color={colors.black}>
                     LogOut
                 </Typo>
-            </Button>
+            </Button> */}
         </ScreenWrapper>
     )
 }

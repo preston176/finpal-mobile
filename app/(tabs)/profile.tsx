@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { Image } from "expo-image"
 import { colors, radius, spacingX, spacingY } from '@/constants/theme'
 import { verticalScale } from '@/utils/styling'
@@ -10,9 +10,13 @@ import Typo from '@/components/Typo'
 import { getProfileImage } from '@/services/imageService'
 import { accountOptionType } from '@/types'
 import * as Icons from "phosphor-react-native"
+import { signOut } from 'firebase/auth'
+import { auth } from '@/config/firebase'
+import { useRouter } from 'expo-router'
 
 const profile = () => {
     const { user } = useAuth()
+    const router = useRouter()
 
     const accountOptions: accountOptionType[] = [
         {
@@ -41,6 +45,35 @@ const profile = () => {
         },
     ]
 
+    const handleLogout = async () => {
+        await signOut(auth)
+    }
+
+    const showLogoutAlert = () => {
+        Alert.alert("Confirm", "Are you sure you want to logout?", [
+            {
+                text: "Cancel",
+                onPress: () => console.log("Cancel Logout"),
+                style: "cancel",
+            },
+            {
+                text: "Logout",
+                onPress: () => handleLogout(),
+                style: "destructive",
+            },
+
+        ])
+    }
+
+    const handlePress = async (item: accountOptionType) => {
+        if (item.title == "LogOut") {
+            showLogoutAlert();
+        }
+        if (item.routeName) {
+router.push(item.routeName)
+        }
+    }
+
     return (
         <ScreenWrapper>
             <View style={styles.container}><Header title='Profile' style={{ marginVertical: spacingY._10 }} />
@@ -68,7 +101,7 @@ const profile = () => {
                         accountOptions.map((item, index) => (
 
                             <View key={index} style={styles.listItem}>
-                                <TouchableOpacity style={styles.flexRow}>
+                                <TouchableOpacity onPress={() => handlePress(item)} style={styles.flexRow}>
                                     <View style={[styles.listIcon, { backgroundColor: item?.bgColor }]}>
                                         {item.icon && <Typo>{item.icon}</Typo>}
                                     </View>
