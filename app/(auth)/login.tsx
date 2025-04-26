@@ -9,6 +9,7 @@ import Input from '@/components/Input'
 import * as Icons from "phosphor-react-native"
 import Button from '@/components/Button'
 import { useRouter } from 'expo-router'
+import { useAuth } from '@/context/authContext'
 
 const login = () => {
 
@@ -20,10 +21,20 @@ const login = () => {
 
     const router = useRouter()
 
-    const handleSubmit = () => {
+    const { login: loginUser } = useAuth();
+
+    const handleSubmit = async() => {
         if (!emailRef.current || !passwordRef.current) {
             Alert.alert("Login", "please fill in your email and password");
             return;
+        }
+
+        setIsloading(true)
+        const res = await loginUser(emailRef.current, passwordRef.current)
+        setIsloading(false)
+
+        if(!res.success){
+            Alert.alert("Login", res.msg)
         }
     }
 
@@ -86,7 +97,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         gap: spacingY._40,
-                paddingHorizontal: spacingX._20,
+        paddingHorizontal: spacingX._20,
 
     },
     welcomeText: {
