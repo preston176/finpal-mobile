@@ -53,7 +53,7 @@ const walletModal = () => {
 
         const res = await createOrUpdateWallet(data)
 
-        console.log("wallet", res)
+        // console.log("wallet", res)
 
         setLoading(false)
 
