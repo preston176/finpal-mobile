@@ -6,14 +6,29 @@ import { verticalScale } from '@/utils/styling'
 import Typo from '@/components/Typo'
 import * as Icons from "phosphor-react-native"
 import { useRouter } from 'expo-router'
+import useFetchData from '@/hooks/useFetchData'
+import { WalletType } from '@/types'
+import { orderBy, where } from '@firebase/firestore'
+import { useAuth } from '@/context/authContext'
+import Loading from '@/components/Loading'
+import WalletListItem from '@/components/WalletListItem'
+import { FlatList } from 'react-native'
 
 const wallet = () => {
+    const { user } = useAuth()
 
     const router = useRouter();
 
+    const { data: wallets, error, loading } = useFetchData<WalletType>("wallets", [
+        where('uid', "==", user?.uid), orderBy("created", "desc")
+    ])
+
     const getTotalBalance = () => {
-        return 5235
-    }
+        return wallets.reduce((total, item) => {
+            total = total + (item.amount || 0);
+            return total;
+        }, 0);
+    };
 
     return (
         <ScreenWrapper style={{ backgroundColor: colors.black }}>
@@ -21,7 +36,7 @@ const wallet = () => {
                 {/* Balance view */}
                 <View style={styles.balanceView}>
                     <View style={{ alignItems: "center" }}>
-                        <Typo size={45} fontWeight={"500"}>
+                        <Typo size={45} fontWeight={"500"} color={colors.white}>
                             {getTotalBalance()?.toFixed(2)}
                         </Typo>
                         <Typo size={16} color={colors.neutral300}>
@@ -37,12 +52,21 @@ const wallet = () => {
                         <Typo size={20} fontWeight={"500"}>
                             My Wallets
                         </Typo>
-                        <TouchableOpacity onPress={() => { router.push("/(modals)/walletModal")}}>
+                        <TouchableOpacity onPress={() => { router.push("/(modals)/walletModal") }}>
                             <Icons.PlusCircle weight="fill"
                                 color={colors.primary}
                                 size={verticalScale(33)} />
                         </TouchableOpacity>
+
                     </View>
+                    {loading && <Loading />}
+                    <FlatList
+                        data={wallets}
+                        renderItem={({ item, index }) => {
+                            return <WalletListItem router={router}  item={item} index={index} />
+                        }}
+                        contentContainerStyle={styles.listStyle}
+                    />
                 </View>
             </View>
         </ScreenWrapper>

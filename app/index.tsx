@@ -2,6 +2,12 @@ import { Image, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect } from 'react'
 import { colors } from '@/constants/theme'
 import { useRouter } from 'expo-router'
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs([
+    'Text strings must be rendered within a <Text> component',
+    '@firebase/firestore: Firestore',
+]);
 
 const index = () => {
 
