@@ -15,7 +15,6 @@ import { useRouter } from 'expo-router'
 
 const Home = () => {
     const { user } = useAuth()
-
     const router = useRouter()
 
     return (
@@ -24,29 +23,41 @@ const Home = () => {
                 <View style={styles.header}>
                     <View style={{ gap: 4 }}>
                         <Typo size={16} color={colors.neutral400}>Hello,</Typo>
-                        <Typo size={20} fontWeight={"500"}>{user?.name}</Typo>
+                        <Typo size={20} fontWeight="500" color={colors.white}>
+                            {user?.name}
+                        </Typo>
                     </View>
+                    <TouchableOpacity style={styles.searchIcon}>
+                        <Icons.MagnifyingGlass
+                            size={verticalScale(22)}
+                            color={colors.neutral200}
+                            weight="bold"
+                        />
+                    </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.searchIcon}>
-                    <Icons.MagnifyingGlass
-                        size={verticalScale(22)}
-                        color={colors.neutral200}
-                        weight='bold'
-                    />
-                </TouchableOpacity>
             </View>
-            <ScrollView contentContainerStyle={styles.scrollViewStyle} showsVerticalScrollIndicator={false}>
+
+            <ScrollView
+                contentContainerStyle={styles.scrollViewStyle}
+                showsVerticalScrollIndicator={false}
+            >
                 {/* Card */}
                 <View>
                     <HomeCard />
                 </View>
 
-                <TransactionList data={[]} loading={false} emptyListMessage='No transactions added yet' title='Recent Transactions' />
+                <TransactionList
+                    data={[1, 2, 4]}
+                    loading={false}
+                    emptyListMessage="No transactions added yet"
+                    title="Recent Transactions"
+                />
             </ScrollView>
+
             <Button style={styles.floatingButton} onPress={() => router.push("/(modals)/transactionModal")}>
                 <Icons.Plus
                     color={colors.black}
-                    weight='bold'
+                    weight="bold"
                     size={verticalScale(24)}
                 />
             </Button>
@@ -57,10 +68,28 @@ const Home = () => {
 export default Home
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        paddingHorizontal: spacingX._20,
+        marginTop: verticalScale(8),
+        backgroundColor: colors.neutral900, // <<< background dark
+    },
+    header: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: spacingY._10,
+    },
+    searchIcon: {
+        backgroundColor: colors.neutral700,
+        padding: spacingX._10,
+        borderRadius: 50,
+    },
     scrollViewStyle: {
-        marginTop: spacingY._10,
+        paddingHorizontal: spacingX._20, // Make scroll content match container
         paddingBottom: verticalScale(100),
         gap: spacingY._25,
+        backgroundColor: colors.neutral900, // <<< dark background for scrollview too
     },
     floatingButton: {
         height: verticalScale(50),
@@ -68,22 +97,13 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         position: "absolute",
         bottom: verticalScale(30),
-        right: verticalScale(30)
-    },
-    searchIcon: {
-        backgroundColor: colors.neutral700,
-        padding: spacingX._10,
-        borderRadius: 50,
-    },
-    header: {
-        flexDirection: "row",
-        justifyContent: "space-between",
+        right: verticalScale(30),
+        justifyContent: "center",
         alignItems: "center",
-        marginBottom: spacingY._10
+        shadowColor: colors.black,
+        shadowOffset: { width: 0, height: 5 },
+        shadowOpacity: 0.25,
+        shadowRadius: 5,
+        elevation: 8,
     },
-    container: {
-        flex: 1,
-        paddingHorizontal: spacingX._20,
-        marginTop: verticalScale(8)
-    }
 })
