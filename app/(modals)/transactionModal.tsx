@@ -67,15 +67,15 @@ const transactionModal = () => {
     // }, []);
 
     const onsubmit = async () => {
-const {type, amount, description, category, date, walletId, image} = transaction;
-if(!walletId || !date || !amount || (type == "expense" && !category)){
-    Alert.alert("Transaction", "Please fill in all the fields")
-    return
-}
+        const { type, amount, description, category, date, walletId, image } = transaction;
+        if (!walletId || !date || !amount || (type == "expense" && !category)) {
+            Alert.alert("Transaction", "Please fill in all the fields")
+            return
+        }
 
-let transactionData: TransactionType = {
-    type, amount, description, category, date, walletId, image, uid: user?.uid
-}
+        let transactionData: TransactionType = {
+            type, amount, description, category, date, walletId, image, uid: user?.uid
+        }
 
 
     }
@@ -273,7 +273,7 @@ let transactionData: TransactionType = {
                         />
                     </View>
                     <View style={styles.inputContainer}>
-                    <View style={styles.flexRow}>
+                        <View style={styles.flexRow}>
                             <Typo color={colors.neutral200} size={16}>Receipt</Typo>
                         </View>
                         <Typo color={colors.neutral500} size={14}>(optional)</Typo>
@@ -304,7 +304,7 @@ let transactionData: TransactionType = {
                 }
                 <Button onPress={onsubmit} loading={loading} style={{ flex: 1 }}>
                     <Typo color={colors.black} fontWeight={"700"} >{
-                        oldTransaction?.id ? "Update" : "Sumbit"}</Typo>
+                        oldTransaction?.id ? "Update" : "Submit"}</Typo>
                 </Button>
             </View>
         </ModalWrapper>
