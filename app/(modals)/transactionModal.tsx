@@ -77,6 +77,8 @@ const transactionModal = () => {
             type, amount, description, category, date, walletId, image, uid: user?.uid
         }
 
+        console.log(transactionData)
+
 
     }
     const onDelete = async () => {
