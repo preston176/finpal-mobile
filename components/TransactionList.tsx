@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import { TransactionItemProps, TransactionListType } from '@/types'
+import { TransactionItemProps, TransactionListType, TransactionType } from '@/types'
 import { verticalScale } from '@/utils/styling'
 import { colors, radius, spacingX, spacingY } from '@/constants/theme'
 import Typo from './Typo'
@@ -8,12 +8,29 @@ import { FlashList } from "@shopify/flash-list"
 import Loading from './Loading'
 import { expenseCategories, incomeCategory } from '@/constants/data'
 import { Timestamp } from '@firebase/firestore'
+import { useRouter } from 'expo-router'
+
 
 const TransactionList = ({ data, title, loading, emptyListMessage }: TransactionListType) => {
 
 
-    const handleClick = () => {
-        // TODO:
+
+    const router = useRouter();
+    const handleClick = (item: TransactionType) => {
+        router.push({
+            pathname: "/(modals)/transactionModal",
+            params: {
+                id: item?.id,
+                type: item?.type,
+                amount: item?.amount.toString(),
+                category: item?.category,
+                date: (item.date as Timestamp)?.toDate()?.toISOString(),
+                description: item?.description,
+                image: item?.image,
+                uid: item?.uid,
+                walletId: item?.walletId
+            }
+        })
     }
 
     return (
@@ -61,10 +78,10 @@ const TransactionItem = ({ item, index, handleClick }: TransactionItemProps) => 
 
     const IconComponent = category.icon
 
-const date = (item?.date as Timestamp)?.toDate().toLocaleString("en-GB", {
-    day: "numeric",
-    month: "short"
-})
+    const date = (item?.date as Timestamp)?.toDate().toLocaleString("en-GB", {
+        day: "numeric",
+        month: "short"
+    })
 
 
     return <View>
@@ -84,7 +101,7 @@ const date = (item?.date as Timestamp)?.toDate().toLocaleString("en-GB", {
             </View>
             <View style={styles.amountDate}>
                 <Typo fontWeight={"500"} color={item?.type == "income" ? colors.primary : colors.rose}>
-                {`${item?.type == "income" ? "+ Kes" : "- Kes"} ${item?.amount}`}
+                    {`${item?.type == "income" ? "+ Kes" : "- Kes"} ${item?.amount}`}
                 </Typo>
                 <Typo size={13} color={colors.neutral400}>{date}</Typo>
             </View>
