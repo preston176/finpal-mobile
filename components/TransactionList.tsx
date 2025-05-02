@@ -6,7 +6,8 @@ import { colors, radius, spacingX, spacingY } from '@/constants/theme'
 import Typo from './Typo'
 import { FlashList } from "@shopify/flash-list"
 import Loading from './Loading'
-import { expenseCategories } from '@/constants/data'
+import { expenseCategories, incomeCategory } from '@/constants/data'
+import { Timestamp } from '@firebase/firestore'
 
 const TransactionList = ({ data, title, loading, emptyListMessage }: TransactionListType) => {
 
@@ -56,9 +57,16 @@ export default TransactionList
 
 const TransactionItem = ({ item, index, handleClick }: TransactionItemProps) => {
 
-    let category = expenseCategories['groceries']
+    let category = item?.type == "income" ? incomeCategory : expenseCategories[item.category!]
 
     const IconComponent = category.icon
+
+const date = (item?.date as Timestamp)?.toDate().toLocaleString("en-GB", {
+    day: "numeric",
+    month: "short"
+})
+
+
     return <View>
         <TouchableOpacity style={styles.row}>
             <View style={[styles.icon, { backgroundColor: category.bgColor }]}>
@@ -72,12 +80,13 @@ const TransactionItem = ({ item, index, handleClick }: TransactionItemProps) => 
             </View>
             <View style={styles.categoryDes}>
                 <Typo size={17}>{category.label}</Typo>
-                <Typo size={12} color={colors.neutral400} textProps={{ numberOfLines: 1 }}>Water bill</Typo>
+                <Typo size={12} color={colors.neutral400} textProps={{ numberOfLines: 1 }}>{item?.description}</Typo>
             </View>
             <View style={styles.amountDate}>
-                <Typo fontWeight={"500"} color={colors.primary}>
-                    + kes 23
+                <Typo fontWeight={"500"} color={item?.type == "income" ? colors.primary : colors.rose}>
+                {`${item?.type == "income" ? "+ Kes" : "- Kes"} ${item?.amount}`}
                 </Typo>
+                <Typo size={13} color={colors.neutral400}>{date}</Typo>
             </View>
         </TouchableOpacity>
     </View>
