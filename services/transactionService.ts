@@ -28,10 +28,13 @@ export const createOrUpdateTransaction = async (
       return { success: false, msg: "Invalid transaction data" };
     }
 
-    if (!id) {
-      // New transaction, update wallet balance
-      let res = await updateWalletForNewTransaction(walletId!, Number(amount!), type);
-      if (!res.success) return res;
+    if (id) { const oldTransactionSnapshot = await getDoc(doc(firestore, "trasactions", id))
+      const oldTransaction = oldTransactionSnapshot.data() as TransactionType
+     
+    } else {
+ // New transaction, update wallet balance
+ let res = await updateWalletForNewTransaction(walletId!, Number(amount!), type);
+ if (!res.success) return res;
     }
 
     if (image) {

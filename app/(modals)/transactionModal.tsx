@@ -96,6 +96,8 @@ const transactionModal = () => {
             type, amount, description, category, date, walletId, image, uid: user?.uid
         }
 
+        if(oldTransaction?.id) transactionData.id = oldTransaction.id
+
 setLoading(true)
 const res = await createOrUpdateTransaction(transactionData)
 setLoading(false)
