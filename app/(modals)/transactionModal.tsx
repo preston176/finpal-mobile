@@ -14,8 +14,7 @@ import Button from '@/components/Button'
 import { useAuth } from '@/context/authContext'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import ImageUpload from '@/components/ImageUpload'
-import { createOrUpdateWallet, deleteWallet } from '@/services/walletService'
-
+import { deleteWallet } from '@/services/walletService'
 import { Dropdown } from "react-native-element-dropdown"
 import { expenseCategories, transactionTypes } from '@/constants/data'
 import useFetchData from '@/hooks/useFetchData'
