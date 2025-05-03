@@ -119,7 +119,7 @@ const transactionModal = () => {
         if (res.success) {
             router.back()
         } else {
-            Alert.alert("Transaction", res.msg)
+            Alert.alert("Transaction", res.msg as string)
         }
     }
 
