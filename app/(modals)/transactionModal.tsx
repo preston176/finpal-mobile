@@ -93,7 +93,7 @@ const transactionModal = () => {
         }
 
         let transactionData: TransactionType = {
-            type, amount, description, category, date, walletId, image, uid: user?.uid
+            type, amount, description, category, date, walletId, image: image? image : null, uid: user?.uid
         }
 
         if(oldTransaction?.id) transactionData.id = oldTransaction.id
