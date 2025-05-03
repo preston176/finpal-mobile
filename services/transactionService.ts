@@ -3,6 +3,7 @@ import { firestore } from "@/config/firebase";
 import { ResponseType, TransactionType, WalletType } from "@/types";
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   setDoc,
@@ -10,6 +11,7 @@ import {
 } from "@firebase/firestore";
 import { uploadFileToCloudinary } from "./imageService";
 import { createOrUpdateWallet } from "./walletService";
+import { transactionTypes } from "@/constants/data";
 
 // 🔥 Utility function to remove undefined fields
 function removeUndefinedFields<T extends object>(obj: T): Partial<T> {
@@ -209,19 +211,67 @@ const reverAndUpdateWallets = async (
         ? Number(newTransactionAmount)
         : -Number(newTransactionAmount);
 
+    const newWalletAmount = Number(newWallet.amount) + updatedTransactionAmount;
 
-      const newWalletAmount = Number(newWallet.amount)+ updatedTransactionAmount;
+    const newIncomeExpenseAmount = Number(
+      newWallet[updateType]! + Number(newTransactionAmount)
+    );
 
-      const newIncomeExpenseAmount = Number(newWallet[updateType]! + Number(newTransactionAmount))
-
-      await createOrUpdateWallet({
-        id: newWalletId,
-        amount: newWalletAmount,
-        [updateType]: newIncomeExpenseAmount
-      })
+    await createOrUpdateWallet({
+      id: newWalletId,
+      amount: newWalletAmount,
+      [updateType]: newIncomeExpenseAmount,
+    });
     return { success: true };
   } catch (error: any) {
     console.log("Error creating or updating transaction", error);
     return { success: false, msg: error.message };
+  }
+};
+
+export const deleteTransaction = async (
+  transactionId: string,
+  walletId: string
+) => {
+  try {
+    const transacitonRef = doc(firestore, "transactions", transactionId);
+    const transactionSnapshot = await getDoc(transacitonRef);
+
+    if (!transactionSnapshot.exists()) {
+      return { success: false, msg: "Transaction not found" };
+    }
+    const transactionData = transactionSnapshot.data() as TransactionType;
+
+    const TransactionType = transactionData?.type;
+
+    const transactionAmount = transactionData?.amount;
+
+    const walletSnapshot = await getDoc(doc(firestore, "wallets", walletId));
+    const walletData = walletSnapshot.data() as WalletType;
+
+    const updateType =
+      TransactionType == "income" ? "totalIncome" : "totalExpenses";
+    const newWalletAmount =
+      walletData?.amount! -
+      (TransactionType == "income" ? transactionAmount : -transactionAmount);
+
+    const newIncomeExpenseAmount = walletData[updateType]! - transactionAmount;
+
+    if (TransactionType == "expense" && newWalletAmount < 0) {
+      return { success: false, msg: "You cannot delete this transaction" };
+    }
+
+    await createOrUpdateWallet({
+      id: walletId,
+      amount: newWalletAmount,
+      [updateType]: newIncomeExpenseAmount,
+    });
+
+    await deleteDoc(transacitonRef);
+
+    return { success: true };
+  } catch (err) {
+    console.log("Error updating transaction", err);
+    return { success: false, msg: err };
   }
 };

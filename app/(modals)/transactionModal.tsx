@@ -20,7 +20,7 @@ import { expenseCategories, transactionTypes } from '@/constants/data'
 import useFetchData from '@/hooks/useFetchData'
 import { orderBy, where } from '@firebase/firestore'
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { createOrUpdateTransaction } from '@/services/transactionService'
+import { createOrUpdateTransaction, deleteTransaction } from '@/services/transactionService'
 
 const transactionModal = () => {
 
@@ -73,13 +73,13 @@ const transactionModal = () => {
     useEffect(() => {
         if (oldTransaction?.id) {
             setTransaction({
-              type: oldTransaction?.type,
-              amount: Number(oldTransaction.amount),
-              description: oldTransaction.description || "",
-              category: oldTransaction.category || "",
-              date: new Date(oldTransaction.date),
-              walletId: oldTransaction.walletId,
-              image: oldTransaction?.image
+                type: oldTransaction?.type,
+                amount: Number(oldTransaction.amount),
+                description: oldTransaction.description || "",
+                category: oldTransaction.category || "",
+                date: new Date(oldTransaction.date),
+                walletId: oldTransaction.walletId,
+                image: oldTransaction?.image
             })
         }
     }, []);
@@ -92,20 +92,20 @@ const transactionModal = () => {
         }
 
         let transactionData: TransactionType = {
-            type, amount, description, category, date, walletId, image: image? image : null, uid: user?.uid
+            type, amount, description, category, date, walletId, image: image ? image : null, uid: user?.uid
         }
 
-        if(oldTransaction?.id) transactionData.id = oldTransaction.id
+        if (oldTransaction?.id) transactionData.id = oldTransaction.id
 
-setLoading(true)
-const res = await createOrUpdateTransaction(transactionData)
-setLoading(false)
+        setLoading(true)
+        const res = await createOrUpdateTransaction(transactionData)
+        setLoading(false)
 
-if(res.success) {
-    router.back()
-} else {
-    Alert.alert("Transaction", res.msg)
-}
+        if (res.success) {
+            router.back()
+        } else {
+            Alert.alert("Transaction", res.msg)
+        }
 
 
     }
@@ -113,13 +113,13 @@ if(res.success) {
         // console.log("deleting wallet", oldTransaction?.id)
         if (!oldTransaction?.id) return
         setLoading(true)
-        const res = await deleteWallet(oldTransaction?.id)
+        const res = await deleteTransaction(oldTransaction?.id, oldTransaction.walletId)
         setLoading(false)
 
         if (res.success) {
             router.back()
         } else {
-            Alert.alert("Wallet", res.msg)
+            Alert.alert("Transaction", res.msg)
         }
     }
 
