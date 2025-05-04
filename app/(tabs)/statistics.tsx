@@ -1,14 +1,14 @@
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useState, useEffect } from 'react'
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { colors, radius, spacingX, spacingY } from '@/constants/theme'
 import { scale, verticalScale } from '@/utils/styling'
 import ScreenWrapper from '@/components/ScreenWrapper'
 import Header from '@/components/Header'
 import SegmentedControl from '@react-native-segmented-control/segmented-control';
-import { BarChart, LineChart, PieChart, PopulationPyramid } from "react-native-gifted-charts"
+import { BarChart } from "react-native-gifted-charts"
 import Loading from '@/components/Loading'
 import { useAuth } from '@/context/authContext'
-import { fetchMonthlyStats, fetchWeeklyStats } from '@/services/transactionService'
+import { fetchMonthlyStats, fetchWeeklyStats, fetchYearlyStats } from '@/services/transactionService'
 import TransactionList from '@/components/TransactionList'
 
 const barData = [
@@ -82,7 +82,15 @@ const statistics = () => {
   }
 
   const getYearlyStats = async () => {
-
+    setChartLoading(true)
+    let res = await fetchYearlyStats(user?.uid as string)
+    setChartLoading(false)
+    if (res.success) {
+      setChartData(res?.data?.stats)
+      setTransactions(res?.data?.transactions)
+    } else {
+      Alert.alert("Error", res.msg)
+    }
   }
 
 
